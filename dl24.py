@@ -69,6 +69,11 @@ class LowLevelSerPort:
       print('ERRPORTCONN: cannot connect to',self.serport,'- too many retries. Aborting.',file=stdlog)
       exit(12)
     if self.verbconn: print('SERPORT:connected',file=stdlog)
+    # BW150 firmware requires BLE init command to start data streaming
+    if 'rfcomm' in self.serport:
+      self.port.write(b'AT+BMDL24_BLE\r\n')
+      sleep(1)
+      self.port.reset_input_buffer()
     return None
 
   def close(self):
